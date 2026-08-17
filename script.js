@@ -1,3 +1,4 @@
+// ========== อัตราแลกเปลี่ยนเงินตรา (ฐานมูลค่า THB = 1) ==========
 const rates = {
   THB: 1,
   USD: 35.50,
@@ -8,6 +9,7 @@ const rates = {
   KRW: 0.026,
 };
 
+// ========== ดึงสมาชิก DOM เพื่อใช้งาน ==========
 const amountOne = document.getElementById('amount-one');
 const amountTwo = document.getElementById('amount-two');
 const currencyOne = document.getElementById('currency-one');
@@ -21,30 +23,36 @@ const btnSwap = document.getElementById('btn-swap');
 const historyList = document.getElementById('history-list');
 const historyEmpty = document.getElementById('history-empty');
 
+// ========== อาร์เรย์เก็บประวัติการแลกเปลี่ยน ==========
 const history = [];
 
+// ========== ฟังก์ชันแปลงสกุลเงิน ==========
 function convert(amount, from, to) {
   const a = parseFloat(amount);
   if (amount === '' || isNaN(a)) return NaN;
   return (a * rates[from]) / rates[to];
 }
 
+// ========== ฟังก์ชันจัดรูปแบบตัวเลขสำหรับช่องกรอก ==========
 function formatInput(n) {
   if (!isFinite(n)) return '';
   if (n !== 0 && Math.abs(n) < 0.01) return n.toFixed(6);
   return (Math.round(n * 100) / 100).toFixed(2);
 }
 
+// ========== ฟังก์ชันจัดรูปแบบตัวเลขสำหรับการแสดงผล ==========
 function formatDisplay(n) {
   return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
 }
 
+// ========== ฟังก์ชันจัดรูปแบบอัตราแลกเปลี่ยน ==========
 function formatRate(n) {
   if (!isFinite(n)) return '-';
   if (n >= 1) return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
   return n.toLocaleString('en-US', { maximumFractionDigits: 5 });
 }
 
+// ========== ฟังก์ชันอัปเดตข้อความแสดงอัตราแลกเปลี่ยน ==========
 function updateRateText() {
   const one = currencyOne.value;
   const two = currencyTwo.value;
@@ -52,6 +60,7 @@ function updateRateText() {
   rateText.innerHTML = `1 ${one} = <span class="badge rounded-pill text-bg-success ms-1">${formatRate(rate)} ${two}</span>`;
 }
 
+// ========== ฟังก์ชันคำนวณและอัปเดตจำนวนเงิน ==========
 function recalculate(source) {
   if (source === 'one') {
     amountTwo.value = formatInput(convert(amountOne.value, currencyOne.value, currencyTwo.value));
@@ -60,6 +69,7 @@ function recalculate(source) {
   }
 }
 
+// ========== Event Listeners สำหรับช่องกรอกจำนวนเงิน ==========
 amountOne.addEventListener('input', () => {
   updateRateText();
   recalculate('one');
@@ -70,6 +80,7 @@ amountTwo.addEventListener('input', () => {
   recalculate('two');
 });
 
+// ========== Event Listeners สำหรับเปลี่ยนสกุลเงิน ==========
 currencyOne.addEventListener('change', () => {
   updateRateText();
   recalculate('one');
@@ -80,6 +91,7 @@ currencyTwo.addEventListener('change', () => {
   recalculate('two');
 });
 
+// ========== ฟังก์ชันสลับสกุลเงินและจำนวนเงิน ==========
 btnSwap.addEventListener('click', () => {
   const tmpCur = currencyOne.value;
   currencyOne.value = currencyTwo.value;
@@ -93,6 +105,7 @@ btnSwap.addEventListener('click', () => {
   recalculate('one');
 });
 
+// ========== Event Listeners สำหรับกด Enter ในช่องกรอก ==========
 amountOne.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') btnConvert.click();
 });
@@ -101,6 +114,7 @@ amountTwo.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') btnConvert.click();
 });
 
+// ========== ฟังก์ชันเพิ่มประวัติการแลกเปลี่ยน ==========
 function addHistory(fromAmount, fromCur, toAmount, toCur) {
   history.unshift({
     from: formatDisplay(fromAmount),
@@ -112,6 +126,7 @@ function addHistory(fromAmount, fromCur, toAmount, toCur) {
   renderHistory();
 }
 
+// ========== ฟังก์ชันแสดงผลประวัติการแลกเปลี่ยน ==========
 function renderHistory() {
   historyList.innerHTML = '';
   if (history.length === 0) {
@@ -129,6 +144,7 @@ function renderHistory() {
   });
 }
 
+// ========== Event Listener สำหรับปุ่มแลกเปลี่ยน ==========
 btnConvert.addEventListener('click', () => {
   const fromAmount = parseFloat(amountOne.value);
   if (isNaN(fromAmount) || fromAmount <= 0) {
@@ -143,6 +159,7 @@ btnConvert.addEventListener('click', () => {
   updateUpdatedTime();
 });
 
+// ========== Event Listener สำหรับปุ่มล้างข้อมูล ==========
 btnClear.addEventListener('click', () => {
   amountOne.value = '';
   amountTwo.value = '';
@@ -152,11 +169,13 @@ btnClear.addEventListener('click', () => {
   updateUpdatedTime();
 });
 
+// ========== Event Listener สำหรับปุ่มล้างประวัติ ==========
 btnHistoryClear.addEventListener('click', () => {
   history.length = 0;
   renderHistory();
 });
 
+// ========== ฟังก์ชันอัปเดตเวลาล่าสุด ==========
 function updateUpdatedTime() {
   const now = new Date();
   const pad = (n) => String(n).padStart(2, '0');
@@ -165,6 +184,7 @@ function updateUpdatedTime() {
   updatedText.textContent = `อัปเดตล่าสุด: ${dateStr} ${timeStr} น.`;
 }
 
+// ========== เรียกใช้ฟังก์ชันเริ่มต้น ==========
 updateRateText();
 updateUpdatedTime();
 renderHistory();
