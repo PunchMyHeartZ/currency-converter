@@ -1,0 +1,25 @@
+body {
+  font-family: 'Prompt', sans-serif;
+}
+
+.swap-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, background-color 0.2s;
+}
+
+.swap-btn:hover {
+  transform: rotate(180deg);
+}
+
+.history-item {
+  transition: background-color 0.15s;
+}
+
+.history-item:hover {
+  background-color: #f1f5f9 !important;
+}
